@@ -847,6 +847,7 @@ for (exception in Postmedia.Analytics.Exceptions.MarkUpLang) {
 }
 
 //Date data
+try {
 Postmedia.Analytics.Time.Info=Postmedia.Analytics.Time.infoParser();
 // Set hour
 Postmedia.Analytics.Time.Hour=Postmedia.Analytics.Time.Info.split(':')[0];
@@ -856,6 +857,7 @@ Postmedia.Analytics.Time.Hour=Postmedia.Analytics.Time.Hour+Postmedia.Analytics.
 Postmedia.Analytics.Time.Day=Postmedia.Analytics.Time.Info.split('|')[1]; // Set day
 Postmedia.Analytics.Time.DayType='Weekday';
 if (Postmedia.Analytics.Time.Day=='Saturday'||Postmedia.Analytics.Time.Day=='Sunday') Postmedia.Analytics.Time.DayType='Weekend';
+}catch(e) { console.log(e) }
 
 //Division
 Postmedia.Analytics.Division=Postmedia.Analytics.DivisionTypes.UNKNOWN;
