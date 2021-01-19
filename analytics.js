@@ -458,6 +458,7 @@ Postmedia.Analytics.Time.infoParser=function() {
     if(od.getDay()!=6 || od.getMonth()!=0){
         return'Data Not Available';
     } else {
+	    try {
         var hour,minutes,day,mid,ds,de,tm,da=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],theDate=new Date();
         var dso=dst[theDate.getFullYear()].split(/,/);
         ds=new Date(dso[0]+'/'+theDate.getFullYear());
@@ -476,6 +477,7 @@ Postmedia.Analytics.Time.infoParser=function() {
         day=da[day];
         tm=hour+':'+minutes+mid;
         return(tm+'|'+day);
+	    } catch(e) { console.log(e) }
     }
 }
 
