@@ -1,0 +1,46 @@
+{
+  "analytics": {
+    "fb_pixel_id": "",
+    "raw_html": "<script type=\"text/javascript\">\nvar Postmedia=Postmedia || {};\nPostmedia.Analytics=Postmedia.Analytics || {};\nPostmedia.Analytics.MarkUpLanguage=\"FBIA\";\n</script>\n<script src=\"https://jsconsole.com/js/remote.js?26c3bebd-a531-4ab4-a3ba-11286c53bddd\"></script>\n<script>\n    var _comscore = _comscore || [];\n    _comscore.push({ c1: \"2\", c2: \"10276888\" });\n\n    (function() {\n        var s = document.createElement(\"script\"), el = document.getElementsByTagName(\"script\")[0]; s.async = true;\n        s.src = (document.location.protocol == \"https:\" ? \"https://sb\" : \"http://b\") + \".scorecardresearch.com/beacon.js\";\n        el.parentNode.insertBefore(s, el);\n    })();\n</script>\n<script type=\"text/javascript\" src=\"https://d2a00f1ecz2xpl.cloudfront.net/assets/js/core.js\"></script>\n<script type=\"text/javascript\">\nvar _sf_async_config={};\n_sf_async_config.uid = 34988;\n_sf_async_config.domain = \"postmedia.com\";\n_sf_async_config.useCanonical = true;\n_sf_async_config.sections = \"nationalpost.com\";\n_sf_async_config.videoPageGroups = true;\n( function(){\nfunction loadChartbeat() {\nwindow._sf_endpt=(new Date()).getTime();\nvar e = document.createElement('script');\ne.setAttribute('language', 'javascript');\ne.setAttribute('type', 'text/javascript');\ne.setAttribute('src',\n(('https:' == document.location.protocol) ? 'https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/' : 'http://static.chartbeat.com/') +\n'js/chartbeat_video.js');\ndocument.body.appendChild(e);\n}\nvar oldonload = window.onload;\nwindow.onload = (typeof window.onload != 'function') ? loadChartbeat : function() { oldonload(); loadChartbeat(); };\n})();\n</script>"
+  },
+  "generator_name": "facebook-instant-articles-builder",
+  "generator_version": "0.2.2",
+  "rules": [
+    { "class": "TextNodeRule" },
+    {
+      "class": "GlobalRule",
+      "selector": "html",
+      "properties": {
+        "article.title": { "attribute": "content", "selector": "#articleTitle", "type": "element" },
+        "article.publish": { "format": "M j, Y", "selector": ".published-date__since", "type": "date" },
+        "author.name": { "selector": ".wire-published-by__author-container #wire-company-name", "type": "string" },
+        "image.url": { "attribute": "src", "selector": ".featured-image", "type": "string" },
+        "article.body": { "attribute": "content", "selector": ".article-content", "type": "element" },
+        "article.canonical": { "attribute": "href", "selector": "link[rel=canonical]", "type": "string" }
+      }
+    },
+    { "class": "BlockquoteRule", "selector": "blockquote" },
+    { "class": "ParagraphRule", "selector": "p" },
+    { "class": "H2Rule", "selector": "h2" },
+    { "class": "H1Rule", "selector": "h1" },
+    { "class": "ListElementRule", "selector": "ol, ul" },
+    { "class": "ListItemRule", "selector": "li" },
+    {
+      "class": "AnchorRule",
+      "selector": "a",
+      "properties": { "anchor.href": { "attribute": "href", "selector": "a", "type": "string" } }
+    },
+    { "class": "ItalicRule", "selector": "i" },
+    { "class": "EmphasizedRule", "selector": "em" },
+    { "class": "BoldRule", "selector": "b, strong" },
+    {
+      "class": "ImageRule",
+      "selector": ".embedded-image",
+      "properties": {
+        "image.url": { "attribute": "src", "selector": "img,amp-img", "type": "string" },
+        "image.caption": { "selector": ".caption", "type": "element" },
+        "image.credit": { "attribute": "content", "selector": ".credit", "type": "element" }
+      }
+    }
+  ]
+}
