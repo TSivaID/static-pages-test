@@ -452,7 +452,7 @@ try {
 
 Postmedia.Analytics.Time={};
 Postmedia.Analytics.Time.infoParser=function() {
-    var dst={2017:'3/12,11/5',2018:'3/11,11/4',2019:'3/10,11/3',2020:'3/8,11/1'}; //US settings
+    var dst={2017:'3/12,11/5',2018:'3/11,11/4',2019:'3/10,11/3',2020:'3/8,11/1',2021:'3/14,11/7'}; //US settings
     var zone = -5;
     var od=new Date('1/1/2000');
     if(od.getDay()!=6 || od.getMonth()!=0){
