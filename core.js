@@ -10,6 +10,12 @@ Postmedia.Audience=Postmedia.Audience || {};
 window.mParticle=window.mParticle || {};
 window.mParticle.ready=window.mParticle.ready || new Function();
 
+// ia_document.shareURL - The URL the user shared
+// (if there are no redirections, otherwise the final URL in the chain)
+// ia_document.title - The article title
+// Reference: https://developers.facebook.com/docs/instant-articles/analytics/
+Postmedia.fbia_document = window.ia_document || {}
+
 Postmedia.Audience.EventType={Location:2,Navigation:1,Other:8,Search:3,Social:7,Transaction:4,Unknown:0,UserContent:5,UserPreference:6}; //Values set for cases where event happens before EventType is set.
 window.mParticle.ready(function() {
     Postmedia.Audience.EventType=mParticle.EventType;
@@ -840,9 +846,10 @@ if(!Postmedia.Analytics.MeteredContentPageType || Postmedia.Analytics.MeteredCon
 
 //Markup Language
 Postmedia.Analytics.MarkUpLanguage=Postmedia.Analytics.MarkUpLanguage || "HTML5";
-for (exception in Postmedia.Analytics.Exceptions.MarkUpLang) {
-    if (Postmedia.Analytics.URL.host.indexOf(Postmedia.Analytics.Exceptions.MarkUpLang[exception].searchValue)>-1) {Postmedia.Analytics.MarkUpLanguage=Postmedia.Analytics.Exceptions.MarkUpLang[exception].value;break;}
-}
+// NOTE: Comment the next 3 lines to make sure that MarkUpLanguage is only set by embeded JS in FBIA pages from Facebook servers. Couldn't find any domain like `fbia.example-site.com` for our news sites. Did we use in the past?
+// for (exception in Postmedia.Analytics.Exceptions.MarkUpLang) {
+//     if (Postmedia.Analytics.URL.host.indexOf(Postmedia.Analytics.Exceptions.MarkUpLang[exception].searchValue)>-1) {Postmedia.Analytics.MarkUpLanguage=Postmedia.Analytics.Exceptions.MarkUpLang[exception].value;break;}
+// }
 
 //Date data
 Postmedia.Analytics.Time.Info=Postmedia.Analytics.Time.infoParser();
@@ -948,6 +955,19 @@ if( Postmedia.Analytics.Vendor && -1 != Postmedia.Analytics.Vendor.search( 'post
 // Debug Data (Adobe Vistitor ID Present | WP vs LEGO vs S3 | file name)
 Postmedia.Analytics.DebugData=Postmedia.Analytics.DebugData || 'S3 | core';
 
+// Do not pass `AMP Identifier` custom attribute for FBIA pages.
+if (Postmedia.Analytics.MarkUpLanguage === "FBIA") {
+    Postmedia.Analytics.AmpIdentifier = undefined
+} else {
+    // Same old code `Postmedia.Analytics.Server.split('.')[0]` is used for non FBIA pages.
+    Postmedia.Analytics.AmpIdentifier = Postmedia.Analytics.Server ? Postmedia.Analytics.Server.split('.')[0] : ''
+}
+
+// Same old code `Postmedia.Analytics.ContentTitle.split("|")[0]` is used for non FBIA pages.
+Postmedia.Analytics.ArticleName = Postmedia.Analytics.MarkUpLanguage === "FBIA" ? Postmedia.fbia_document.title : Postmedia.Analytics.ContentTitle.split("|")[0]
+
+// Same old code `Postmedia.Analytics.ContentTitle` is used for non FBIA pages.
+Postmedia.Analytics.ScreenViewContentTitle = Postmedia.Analytics.MarkUpLanguage === "FBIA" ? Postmedia.fbia_document.title : Postmedia.Analytics.ContentTitle
 /* END Set Postmedia.Analytics Data */
 
 /**
@@ -997,7 +1017,7 @@ Postmedia.Analytics.DebugData=Postmedia.Analytics.DebugData || 'S3 | core';
              "Markup Language": Postmedia.Analytics.MarkUpLanguage,
              "WordPress Sub Categories": Postmedia.Analytics.WPSubCategories,
              "Sponsor": Postmedia.Analytics.Sponsor,
-             "Content Title": Postmedia.Analytics.ContentTitle,
+             "Content Title": Postmedia.Analytics.ScreenViewContentTitle,
              "Publication Date": Postmedia.Analytics.PublicationDate,
              "Publish Time of Day": Postmedia.Analytics.PublicationTimeOfDay,
              "Page Type": Postmedia.Analytics.PageType,
@@ -1019,7 +1039,7 @@ Postmedia.Analytics.DebugData=Postmedia.Analytics.DebugData || 'S3 | core';
              "Driving Body Style Filters": Postmedia.Analytics.Driving.BodyStyleFilters,
              "Driving Make And Model": Postmedia.Analytics.Driving.MakeModel,
              "Analytics Debug Info": Postmedia.Analytics.DebugData,
-             "AMP Identifier": (Postmedia.Analytics.Server) ? Postmedia.Analytics.Server.split('.')[0] : ''
+             "AMP Identifier": Postmedia.Analytics.AmpIdentifier
          },{});
 
      // Page Events
@@ -1029,12 +1049,12 @@ Postmedia.Analytics.DebugData=Postmedia.Analytics.DebugData || 'S3 | core';
              "Sub Section" : Postmedia.Analytics.Category2Levels,
              "Sub Section 2" : Postmedia.Analytics.Category3Levels,
              "Sub Section 3" : Postmedia.Analytics.Category4Levels,
-             "AMP Identifier": (Postmedia.Analytics.Server) ? Postmedia.Analytics.Server.split('.')[0] : ''
+             "AMP Identifier": Postmedia.Analytics.AmpIdentifier
              //"Number of Pages" : null,
              }, { "Google.NonInteraction" : true } );
      } else if (Postmedia.Analytics.PageType=='story') {
          Postmedia.Audience.logEvent("View Article", Postmedia.Audience.EventType.Navigation, {
-             "Article Name": Postmedia.Analytics.ContentTitle.split("|")[0] ,
+             "Article Name": Postmedia.Analytics.ArticleName ,
              "Article Category": Postmedia.Analytics.Category,
              "Article Sub Section": Postmedia.Analytics.Category2Levels,
              "Sub Section 2": Postmedia.Analytics.Category3Levels,
@@ -1051,7 +1071,7 @@ Postmedia.Analytics.DebugData=Postmedia.Analytics.DebugData || 'S3 | core';
              "Global Post ID": Postmedia.Analytics.ContentId+","+Postmedia.Analytics.ContentOriginId,
              "NLP Tags": (typeof Postmedia.Analytics.NLP=='object') ? [Postmedia.Analytics.NLP.Parser(Postmedia.Analytics.NLP.entities,'products'),Postmedia.Analytics.NLP.Parser(Postmedia.Analytics.NLP.key_topics,'products','Topic')].filter(function (val) {return val;}).join(',') : null,
              "Paywall Whitelist": Postmedia.Analytics.MeteredContentPageType,
-             "AMP Identifier": (Postmedia.Analytics.Server) ? Postmedia.Analytics.Server.split('.')[0] : ''
+             "AMP Identifier": Postmedia.Analytics.AmpIdentifier
          }, { "Google.NonInteraction" : true, "Google.Page": Postmedia.Analytics.URL.href } );
      } else {
          Postmedia.Audience.logEvent("View Category", Postmedia.Audience.EventType.Navigation,
@@ -1059,7 +1079,7 @@ Postmedia.Analytics.DebugData=Postmedia.Analytics.DebugData || 'S3 | core';
              "Sub Section" : Postmedia.Analytics.Category2Levels,
              "Sub Section 2" : Postmedia.Analytics.Category3Levels,
              "Sub Section 3" : Postmedia.Analytics.Category4Levels,
-             "AMP Identifier": (Postmedia.Analytics.Server) ? Postmedia.Analytics.Server.split('.')[0] : ''
+             "AMP Identifier": Postmedia.Analytics.AmpIdentifier
              }, { "Google.NonInteraction" : true } );
      }
 
